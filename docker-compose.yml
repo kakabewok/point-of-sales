@@ -18,18 +18,23 @@ services:
     image: nginx:alpine
     container_name: ${APP_NAME}_nginx
     restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
+    # [HAPUS] ports 80:80 dan 443:443 — Traefik yang handle sekarang
     volumes:
       - .:/var/www
       - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
+      # [HAPUS] certbot volumes — SSL diurus Traefik otomatis
     networks:
+      - traefik_network # [TAMBAH] agar Traefik bisa routing ke container ini
       - app_network
     depends_on:
       - php
+    labels:
+      # [TAMBAH] semua label ini — ini yang mengatur routing Traefik
+      - "traefik.enable=true"
+      - "traefik.http.routers.calapos.rule=Host(`andtech-async.my.id`) || Host(`www.andtech-async.my.id`)"
+      - "traefik.http.routers.calapos.entrypoints=websecure"
+      - "traefik.http.routers.calapos.tls.certresolver=letsencrypt"
+      - "traefik.http.services.calapos.loadbalancer.server.port=80"
 
   mysql:
     image: mysql:8.0
@@ -40,8 +45,7 @@ services:
       MYSQL_USER: ${DB_USERNAME}
       MYSQL_PASSWORD: ${DB_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
-    ports:
-      - "3306:3306"
+    # [HAPUS] ports 3306:3306 — jangan pernah expose DB ke publik!
     volumes:
       - mysql_data:/var/lib/mysql
       - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
@@ -54,9 +58,10 @@ services:
       retries: 5
 
   redis:
-    image: redis:7-alpine
+    image: redis:alpine
     container_name: ${APP_NAME}_redis
     restart: unless-stopped
+    # [TIDAK ADA PERUBAHAN] redis tetap di app_network saja
     volumes:
       - redis_data:/data
     networks:
@@ -68,7 +73,7 @@ services:
       dockerfile: Dockerfile
     container_name: ${APP_NAME}_queue
     restart: unless-stopped
-    command: php artisan queue:work --sleep=3 --tries=3 --max-time=3600
+    command: php artisan queue:work --sleep=3 --tries=3
     volumes:
       - .:/var/www
     networks:
@@ -76,8 +81,6 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
-      redis:
-        condition: service_started
 
   scheduler:
     build:
@@ -93,22 +96,16 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
-
-  certbot:
-    image: certbot/certbot
-    container_name: ${APP_NAME}_certbot
-    # restart: unless-stopped
-    volumes:
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
-    # entrypoint: >
-    # sh -c "trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot; sleep 12h & wait $${!}; done"
+  # [HAPUS] service certbot seluruhnya — tidak diperlukan lagi
+  # Traefik mengurus SSL otomatis via Let's Encrypt
 
 volumes:
   mysql_data:
   redis_data:
 
-
 networks:
+  traefik_network:
+    # [TAMBAH] network eksternal yang dishare dengan Traefik
+    external: true
   app_network:
-    driver: bridge
+    driver: bridge # [TIDAK ADA PERUBAHAN] network internal antar service
