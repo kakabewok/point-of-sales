@@ -8,7 +8,7 @@
 ])
 
 <flux:modal wire:model="showPaymentModal" {{ $attributes->merge(['class' => 'max-w-sm md:max-w-2xl p-2 overflow-hidden bg-white dark:bg-zinc-900 rounded-md w-full']) }}>
-    <div class="p-4 md:p-6 space-y-6 overflow-y-auto md:overflow-y-hidden max-h-[85vh] md:max-h-[93vh]">
+    <div class="p-4 md:p-6 space-y-6 overflow-y-auto max-h-[85vh] md:max-h-[93vh]">
         <header class="flex justify-between items-end border-b border-zinc-100 dark:border-zinc-800 pb-5">
             <div>
                 <h2 class="text-xl font-black uppercase tracking-tighter text-zinc-900 dark:text-white leading-none">Checkout</h2>
