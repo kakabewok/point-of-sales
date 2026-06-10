@@ -14,6 +14,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use App\Services\ActivityLogger;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 #[Layout('layouts.app')]
 #[Title('Laporan Penjualan')]
@@ -44,6 +45,7 @@ class ReportManager extends Component
     public $editNotes = '';
     public $editDiscountType = '';
     public $editDiscountValue = 0;
+    public $editTransactionDate = '';
 
     // Computed totals for the edit form
     public $editSubtotal = 0;
@@ -93,6 +95,7 @@ class ReportManager extends Component
             return;
         }
 
+        $this->editTransactionDate = $transaction->created_at->format('Y-m-d');
         $this->editingTransactionId = $transaction->id;
         $this->editPaymentMethod = $transaction->payment?->method ?? 'cash';
         $this->editNotes = $transaction->notes ?? '';
@@ -185,11 +188,13 @@ class ReportManager extends Component
             'editItems.*.quantity' => 'required|integer|min:1',
             'editItems.*.product_price' => 'required|numeric|min:0',
             'editPaymentMethod' => 'required|in:cash,qris,va',
+            'editTransactionDate' => 'required|date',
         ], [
             'editItems.required' => 'Minimal 1 item diperlukan.',
             'editItems.*.quantity.min' => 'Jumlah minimal 1.',
             'editItems.*.product_price.min' => 'Harga tidak boleh negatif.',
             'editPaymentMethod.required' => 'Metode pembayaran harus dipilih.',
+            'editTransactionDate.required' => 'Tanggal transaksi harus diisi.',
         ]);
 
         $this->recalculateEditTotals();
@@ -248,6 +253,8 @@ class ReportManager extends Component
                     'tax_amount' => $this->editTaxAmount,
                     'grand_total' => $this->editGrandTotal,
                     'notes' => $this->editNotes ?: null,
+                    'created_at' => Carbon::parse($this->editTransactionDate)
+                    ->startOfDay(),
                 ]);
 
                 // Update payment
@@ -265,7 +272,7 @@ class ReportManager extends Component
             });
 
             $this->showEditModal = false;
-            $this->reset(['editingTransactionId', 'editItems', 'editPaymentMethod', 'editNotes', 'editDiscountType', 'editDiscountValue']);
+            $this->reset(['editTransactionDate', 'editingTransactionId', 'editItems', 'editPaymentMethod', 'editNotes', 'editDiscountType', 'editDiscountValue']);
             session()->flash('message', 'Transaksi berhasil diperbarui.');
 
         } catch (\Exception $e) {

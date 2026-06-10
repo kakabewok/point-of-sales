@@ -175,6 +175,7 @@
         </div>
     </flux:modal>
 
+    <!-- Edit Modal -->
     <flux:modal wire:model="showEditModal" class="max-w-sm md:max-w-2xl bg-white dark:bg-zinc-900 rounded-xl shadow-xl">
         <div class="flex flex-col max-h-[70vh] md:max-h-[90vh]">
             <div class="sticky top-0 -z-10 bg-white dark:bg-zinc-900 p-6 w-full">
@@ -236,6 +237,22 @@
                         </div>
                         @error('editItems') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror
                         @error('editItems.*.quantity') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
+                            Tanggal Transaksi
+                        </label>
+
+                        <input
+                            type="date"
+                            wire:model.live.debounce.300ms="editTransactionDate"
+                            class="w-full h-10 rounded-lg border border-zinc-300 bg-white px-3 text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
+                        />
+
+                        @error('editTransactionDate')
+                            <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     {{-- Discount & Payment --}}

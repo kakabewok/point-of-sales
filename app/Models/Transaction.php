@@ -15,6 +15,7 @@ class Transaction extends Model
     use HasFactory, SoftDeletes, BelongsToStore;
 
     protected $fillable = [
+        'created_at',
         'store_id',
         'invoice_number',
         'user_id',
