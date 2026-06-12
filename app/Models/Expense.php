@@ -16,6 +16,8 @@ class Expense extends Model
         'store_id',
         'category_id',
         'amount',
+        'quantity',
+        'unit',
         'description',
         'expense_date',
         'image_path',

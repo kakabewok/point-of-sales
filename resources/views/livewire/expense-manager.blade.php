@@ -72,6 +72,8 @@
                         <th class="px-6 py-4 text-left font-semibold text-zinc-600 dark:text-zinc-400">Kategori</th>
                         <th class="px-6 py-4 text-right font-semibold text-zinc-600 dark:text-zinc-400">Jumlah (Rp)</th>
                         <th class="px-6 py-4 text-left font-semibold text-zinc-600 dark:text-zinc-400">Deskripsi</th>
+                        <th class="px-6 py-4 text-left font-semibold text-zinc-600 dark:text-zinc-400">Kuantitas</th>
+                        <th class="px-6 py-4 text-left font-semibold text-zinc-600 dark:text-zinc-400">Satuan</th>
                         <th class="px-6 py-4 text-center font-semibold text-zinc-600 dark:text-zinc-400">Bukti</th>
                         <th class="px-6 py-4 text-left font-semibold text-zinc-600 dark:text-zinc-400">Dibuat oleh</th>
                         <th class="px-6 py-4 text-center font-semibold text-zinc-600 dark:text-zinc-400">Aksi</th>
@@ -96,6 +98,12 @@
                             </td>
                             <td class="px-6 py-4">
                                 <div class="text-zinc-600 dark:text-zinc-400 truncate max-w-[200px]" title="{{ $expense->description }}">{{ $expense->description ?: '-' }}</div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="text-zinc-600 dark:text-zinc-400 truncate max-w-[200px]" title="{{ $expense->quantity }}">{{ $expense->quantity ?: '-' }}</div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="text-zinc-600 dark:text-zinc-400 truncate max-w-[200px]" title="{{ $expense->unit }}">{{ $expense->unit ?: '-' }}</div>
                             </td>
                             <td class="px-6 py-4 text-center">
                                 @if($expense->image_path)
@@ -161,6 +169,20 @@
                         <flux:textarea class="mt-1 rounded-lg border-zinc-300" wire:model="description" rows="3" placeholder="Deskripsi pengeluaran..." />
                         <flux:error name="description" class="mt-1 text-sm text-red-500" />
                     </flux:field>
+
+                    <div class="flex gap-2">
+                        <flux:field class="flex-1">
+                            <flux:label class="text-sm font-medium text-zinc-700 dark:text-zinc-300">Kuantitas <span class="text-red-500">*</span></flux:label>
+                            <flux:input type="number" class="h-10 mt-1 rounded-lg border-zinc-300" wire:model="quantity" placeholder="0" min="1" />
+                            <flux:error name="quantity" class="mt-1 text-sm text-red-500" />
+                        </flux:field>
+
+                        <flux:field class="flex-1">
+                            <flux:label class="text-sm font-medium text-zinc-700 dark:text-zinc-300">Satuan <span class="text-red-500">*</span></flux:label>
+                            <flux:input type="text" class="h-10 mt-1 rounded-lg border-zinc-300" wire:model="unit" placeholder="pcs/box/lusin" />
+                            <flux:error name="unit" class="mt-1 text-sm text-red-500" />
+                        </flux:field>
+                    </div>
 
                     <flux:field>
                         <flux:label class="text-sm font-medium text-zinc-700 dark:text-zinc-300">Tanggal <span class="text-red-500">*</span></flux:label>

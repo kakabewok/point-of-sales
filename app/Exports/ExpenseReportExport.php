@@ -51,6 +51,8 @@ class ExpenseReportExport implements FromQuery, WithHeadings, WithMapping, WithS
             'Nama',
             'Jumlah',
             'Deskripsi',
+            'Kuantitas',
+            'Satuan',
             'Dibuat oleh',
         ];
     }
@@ -63,6 +65,8 @@ class ExpenseReportExport implements FromQuery, WithHeadings, WithMapping, WithS
             $expense->description ? mb_substr($expense->description, 0, 50) : '-',
             $expense->amount,
             $expense->description ?? '-',
+            $expense->quantity ?? '-',
+            $expense->unit ?? '-',
             $expense->creator->name ?? '-',
         ];
     }

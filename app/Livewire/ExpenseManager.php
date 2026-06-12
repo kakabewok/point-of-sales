@@ -28,6 +28,8 @@ class ExpenseManager extends Component
     public $editingId = null;
     public $category_id = '';
     public $amount = '';
+    public $quantity = '';
+    public $unit = '';
     public $description = '';
     public $expense_date = '';
     public $image;
@@ -69,6 +71,8 @@ class ExpenseManager extends Component
         return [
             'category_id' => 'required|exists:expense_categories,id',
             'amount' => 'required|numeric|min:1',
+            'quantity' => 'required|numeric|min:1',
+            'unit' => 'nullable|string|max:50',
             'description' => 'nullable|string|max:1000',
             'expense_date' => 'required|date',
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
@@ -79,6 +83,8 @@ class ExpenseManager extends Component
         'category_id.required' => 'Kategori wajib dipilih.',
         'amount.required' => 'Jumlah wajib diisi.',
         'amount.min' => 'Jumlah minimal 1.',
+        'quantity.required' => 'Kuantitas wajib diisi.',
+        'unit.required' => 'Satuan wajib diisi.',
         'expense_date.required' => 'Tanggal wajib diisi.',
         'image.image' => 'File harus berupa gambar.',
         'image.mimes' => 'Format gambar harus JPG atau PNG.',
@@ -89,7 +95,7 @@ class ExpenseManager extends Component
 
     public function create()
     {
-        $this->reset(['category_id', 'amount', 'description', 'image', 'editingId', 'existingImagePath', 'removeImage']);
+        $this->reset(['category_id', 'amount', 'quantity', 'unit', 'description', 'image', 'editingId', 'existingImagePath', 'removeImage']);
         $this->expense_date = now()->format('Y-m-d');
         $this->showModal = true;
     }
@@ -99,6 +105,8 @@ class ExpenseManager extends Component
         $this->editingId = $expense->id;
         $this->category_id = $expense->category_id;
         $this->amount = $expense->amount;
+        $this->quantity = $expense->quantity;
+        $this->unit = $expense->unit;
         $this->description = $expense->description;
         $this->expense_date = $expense->expense_date->format('Y-m-d');
         $this->existingImagePath = $expense->image_path;
@@ -121,6 +129,8 @@ class ExpenseManager extends Component
         $data = [
             'category_id' => $this->category_id,
             'amount' => $this->amount,
+            'quantity' => $this->quantity,
+            'unit' => $this->unit,
             'description' => $this->description,
             'expense_date' => $this->expense_date,
         ];
@@ -144,12 +154,12 @@ class ExpenseManager extends Component
         if ($this->editingId) {
             $expense = Expense::findOrFail($this->editingId);
             $expense->update($data);
-            ActivityLogger::crud('expense_updated', 'expense', $this->editingId, ['amount' => $this->amount]);
+            ActivityLogger::crud('expense_updated', 'expense', $this->editingId, ['amount' => $this->amount, 'quantity' => $this->quantity, 'unit' => $this->unit]);
             session()->flash('message', 'Pengeluaran berhasil diperbarui.');
         } else {
             $data['created_by'] = auth()->id();
             $expense = Expense::create($data);
-            ActivityLogger::crud('expense_created', 'expense', $expense->id, ['amount' => $expense->amount]);
+            ActivityLogger::crud('expense_created', 'expense', $expense->id, ['amount' => $expense->amount, 'quantity' => $expense->quantity, 'unit' => $expense->unit]);
             session()->flash('message', 'Pengeluaran berhasil ditambahkan.');
         }
 

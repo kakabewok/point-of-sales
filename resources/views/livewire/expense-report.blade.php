@@ -62,6 +62,8 @@
                         <th class="px-6 py-4 text-left font-semibold text-zinc-600 dark:text-zinc-400">Kategori</th>
                         <th class="px-6 py-4 text-right font-semibold text-zinc-600 dark:text-zinc-400">Jumlah (Rp)</th>
                         <th class="px-6 py-4 text-left font-semibold text-zinc-600 dark:text-zinc-400">Deskripsi</th>
+                        <th class="px-6 py-4 text-left font-semibold text-zinc-600 dark:text-zinc-400">Kuantitas</th>
+                        <th class="px-6 py-4 text-left font-semibold text-zinc-600 dark:text-zinc-400">Satuan</th>
                         <th class="px-6 py-4 text-center font-semibold text-zinc-600 dark:text-zinc-400">Bukti</th>
                         <!-- <th class="px-6 py-4 text-left font-semibold text-zinc-600 dark:text-zinc-400 ">Dibuat oleh</th> -->
                         <th class="px-6 py-4 text-center font-semibold text-zinc-600 dark:text-zinc-400">Aksi</th>
@@ -86,6 +88,12 @@
                             </td>
                             <td class="px-6 py-4">
                                 <div class="text-zinc-600 dark:text-zinc-400 truncate max-w-[200px]" title="{{ $expense->description }}">{{ $expense->description ? (mb_strlen($expense->description) > 50 ? mb_substr($expense->description, 0, 50) . '...' : $expense->description) : '-' }}</div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="text-zinc-600 dark:text-zinc-400 truncate max-w-[200px]" title="{{ $expense->quantity }}">{{ $expense->quantity ?: '-' }}</div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="text-zinc-600 dark:text-zinc-400 truncate max-w-[200px]" title="{{ $expense->unit }}">{{ $expense->unit ?: '-' }}</div>
                             </td>
                             <td class="px-6 py-4 text-center">
                                 @if($expense->image_path)
@@ -145,6 +153,16 @@
                 <div>
                     <p class="text-xs text-zinc-500 dark:text-zinc-400">Deskripsi</p>
                     <p class="font-medium text-zinc-900 dark:text-white mt-0.5">{{ $detailExpense->description ?: '-' }}</p>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <p class="text-xs text-zinc-500 dark:text-zinc-400">Kuantitas</p>
+                        <p class="font-medium text-zinc-900 dark:text-white mt-0.5">{{ $detailExpense->quantity ?: '-' }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-zinc-500 dark:text-zinc-400">Satuan</p>
+                        <p class="font-medium text-zinc-900 dark:text-white mt-0.5">{{ $detailExpense->unit ?: '-' }}</p>
+                    </div>
                 </div>
                 <div>
                     <p class="text-xs text-zinc-500 dark:text-zinc-400">Dibuat oleh</p>
